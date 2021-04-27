@@ -74,7 +74,7 @@
 
 (defun my--get-args ()
   "FOO."
-  (if-let* ((files (seq-filter 'is-image-p (dired-get-marked-files))))
+  (if-let* ((files (dired-get-marked-files)))
       `(:size    ,(my--prompt-size)
         :out-dir ,(concat (dired-current-directory) "resized")
         :files   ,(seq-filter 'is-image-p files))
