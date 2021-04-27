@@ -77,7 +77,7 @@
   (if-let* ((files (dired-get-marked-files)))
       `(:size    ,(my--prompt-size)
         :out-dir ,(concat (dired-current-directory) "resized")
-        :files   ,(seq-filter 'is-image-p files))
+        :files   ,files)
 
     (my--log "No image(s) marked")))
 
