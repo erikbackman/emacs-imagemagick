@@ -8,7 +8,7 @@
 ;; Modified: April 24, 2021
 ;; Version: 0.0.1
 ;; Keywords: Symbol’s value as variable is void: finder-known-keywords
-;; Homepage: https://github.com/erikbackman/dired-imagemagick
+;; Homepage: https://github.com/erikbackman/emacs-imagemagick
 ;; Package-Requires: ((emacs "24.3"))
 ;;
 ;; This file is not part of GNU Emacs.
@@ -52,10 +52,9 @@
   "ARGS."
   (make-process
    :name "convert"
-   :command (seq-concatenate 'list '("convert") args)
+   :command (cons "convert" args)
    :connection-type 'pipe
-   :sentinel #'my--convert-sentinel)
-  )
+   :sentinel #'my--convert-sentinel))
 
 (defun my--resize (img size out)
   "IMG SIZE OUT."
@@ -69,8 +68,9 @@
                    "594x842"
                    "custom")))
     (let ((choice (ivy-completing-read "Size: " choices)))
-      (cond ((string-equal "custom" choice) (read-from-minibuffer "Size: "))
-            (t choice)))))
+      (if (string-equal "custom" choice)
+          (read-from-minibuffer "Size: ")
+        choice))))
 
 (defun my--get-args ()
   "FOO."
@@ -81,11 +81,11 @@
 
     (my--log "No image(s) marked")))
 
-(defun my--exec-args (action)
-  "ACTION."
-  (when-let ((size (plist-get action :size))
-             (out-dir (plist-get action :out-dir))
-             (files (plist-get action :files)))
+(defun my--exec-args (args)
+  "Do the things using ARGS."
+  (when-let ((size (plist-get args :size))
+             (out-dir (plist-get args :out-dir))
+             (files (plist-get args :files)))
 
     (unless (seq-empty-p files)
       (unless (file-exists-p out-dir)
